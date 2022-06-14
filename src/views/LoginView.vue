@@ -15,13 +15,16 @@
 import store from "../store";
 import { ref } from "vue";
 import router from "../router";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const username = ref(null);
 const password = ref(null);
 
 const login = () => {
   store.user = username.value;
-  router.push("/user");
+  const redirectPath = route.query.redirect || "/";
+  router.push(redirectPath);
 };
 </script>
 

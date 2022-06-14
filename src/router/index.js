@@ -75,6 +75,14 @@ const router = createRouter({
       component: () => import("../views/LoginView.vue"),
     },
     {
+      path: "/invoices",
+      name: "invoices",
+      component: () => import("../views/InvoicesView.vue"),
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
       path: "/404",
       alias: "/:pathMatch(.*)*",
       name: "notFound",
@@ -88,6 +96,7 @@ router.beforeEach((to, from, next) => {
     if (!store.user) {
       next({
         name: "login",
+        query: { redirect: to.fullPath },
       });
     } else {
       next();

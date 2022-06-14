@@ -1,0 +1,112 @@
+<template>
+  <div>
+    <GoBack />
+    <section class="destinations">
+      <h1>
+        {{ destination().name }}
+      </h1>
+      <div class="destination-details">
+        <img :src="getImageUrl()" :alt="destination().name" />
+        <p>{{ destination().description }}</p>
+      </div>
+    </section>
+    <section class="experiences">
+      <h2>Top experiences in {{ destination().name }}</h2>
+      <div class="cards" id="experience">
+        <div
+          v-for="experience in destination().experiences"
+          :key="experience.slug"
+          class="card"
+        >
+          <router-link
+            :to="{
+              name: 'experienceDetails',
+              params: { experienceSlug: experience.slug },
+              hash: '#experience',
+            }"
+          >
+            <img
+              :src="getExperienceImgUrl(experience)"
+              :alt="experience.name"
+            />
+            <span class="card_text">{{ experience.name }}</span>
+          </router-link>
+        </div>
+      </div>
+    </section>
+    <router-view :key="$route.path" />
+  </div>
+</template>
+
+<script setup>
+import store from "../store";
+import GoBack from "../components/GoBack.vue";
+
+// import { useRoute } from "vue-router";
+
+// const route = useRoute();
+// const destinationId = parseInt(route.params.id);
+
+const values = defineProps({
+  slug: {
+    type: String,
+    require: true,
+  },
+});
+
+const destination = () => {
+  return store.destinations.find(
+    (destination) => destination.slug === values.slug
+  );
+};
+
+const getImageUrl = () => {
+  return new URL(`../assets/${destination().image}`, import.meta.url).href;
+};
+
+const getExperienceImgUrl = (experience) => {
+  return new URL(`../assets/${experience.image}`, import.meta.url).href;
+};
+</script>
+
+<style scoped>
+img {
+  max-width: 600px;
+  height: auto;
+  width: 100%;
+  max-height: 400px;
+}
+
+.experiences {
+  padding: 40px 0;
+}
+.destination-details {
+  display: flex;
+  justify-content: space-between;
+}
+p {
+  margin: 0 40px;
+  font-size: 20px;
+  text-align: left;
+}
+.cards {
+  display: flex;
+}
+.cards img {
+  max-height: 200px;
+}
+.card {
+  padding: 0 20px;
+  position: relative;
+}
+.card__text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 25px;
+  font-weight: bold;
+  text-decoration: none;
+}
+</style>
